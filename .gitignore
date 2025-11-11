@@ -1,0 +1,45 @@
+# Virtual environments
+.venv/
+venv/
+env/
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Testing and type checking
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Packaging/build
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# LaTeX build artifacts (keep .tex, .bib, .sty, etc.)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+
+
