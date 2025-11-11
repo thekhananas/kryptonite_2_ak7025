@@ -2,7 +2,6 @@
 .venv/
 venv/
 env/
-.python-version
 
 # Jupyter
 .ipynb_checkpoints/
