@@ -1,0 +1,16 @@
+{
+  "n": 20,
+  "architecture": [
+    1024,
+    512,
+    256,
+    128
+  ],
+  "parameters": 710528,
+  "training_time_hours": 0.1843944027688768,
+  "gflops": 170526.72,
+  "co2_emissions_kg": 3.3031410132844633e-05,
+  "energy_consumed_kwh": 0.008389238437914082,
+  "accuracy_per_kg_co2": 25708.863066539256,
+  "efficiency_score": 25708863.066539254
+}
