@@ -8,10 +8,10 @@
     ],
     "parameters": 710786,
     "actual_iterations": 277,
-    "training_time_sec": 284.3746130466461,
+    "training_time_sec": 283.45335602760315,
     "gflops": 28351.832,
-    "co2_emissions_kg": 0.000853,
-    "energy_consumed_kwh": 0.003591,
+    "co2_emissions_kg": 0.00085,
+    "energy_consumed_kwh": 0.003579,
     "test_accuracy": 0.9476,
-    "accuracy_per_kg_co2": 1110.81
+    "accuracy_per_kg_co2": 1114.34
 }
