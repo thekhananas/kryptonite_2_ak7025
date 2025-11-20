@@ -1,16 +1,17 @@
 {
-  "n": 20,
-  "architecture": [
-    1024,
-    512,
-    256,
-    128
-  ],
-  "parameters": 710528,
-  "training_time_hours": 0.16926867332723405,
-  "gflops": 170526.72,
-  "co2_emissions_kg": 0.0018297488228568668,
-  "energy_consumed_kwh": 0.007701319601736052,
-  "accuracy_per_kg_co2": 464.1074170355835,
-  "efficiency_score": 464107.4170355835
+    "n": 20,
+    "architecture": [
+        1024,
+        512,
+        256,
+        128
+    ],
+    "parameters": 710786,
+    "actual_iterations": 277,
+    "training_time_sec": 284.3746130466461,
+    "gflops": 28351.832,
+    "co2_emissions_kg": 0.000853,
+    "energy_consumed_kwh": 0.003591,
+    "test_accuracy": 0.9476,
+    "accuracy_per_kg_co2": 1110.81
 }
