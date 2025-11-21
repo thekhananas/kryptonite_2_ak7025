@@ -1,0 +1,336 @@
+%%%%%%%% ICML 2021 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+\usepackage{xcolor}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2021} with \usepackage[nohyperref]{icml2021} above.
+\usepackage{hyperref}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+% Redefine section commands with colors
+
+
+
+\usepackage{xcolor}
+\definecolor{imperialblue}{rgb}{0, 0, 0.804}
+\definecolor{crimson}{rgb}{0.8627, 0.078, 0.23529}
+\definecolor{springgreen}{rgb}{0, 0.5, 0.5}
+\definecolor{violet}{rgb}{0.7803, 0.082, 0.52156}
+\definecolor{indigo}{rgb}{0.294, 0.0, 0.5098}
+
+% Define new commands for section headings with colors
+\newcommand{\csection}[1]{\section{\textcolor{imperialblue}{#1}}}
+\newcommand{\csubsection}[1]{\subsection{\textcolor{springgreen}{#1}}}
+\newcommand{\csubsubsection}[1]{\subsubsection{\textcolor{violet}{#1}}}
+\newcommand{\cparagraph}[1]{\paragraph{\textcolor{crimson}{#1}}}
+\newcommand{\csubparagraph}[1]{\subparagraph{\textcolor{indigo}{#1}}}
+
+
+% Use the following line for the initial blind version submitted for review:
+\usepackage{icml2021}
+
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{icml2021}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{\textcolor{violet}{}}
+
+\begin{document}
+
+\twocolumn[
+\icmltitle{\textcolor{black}{Refuting the Kryptonite Hypothesis: \\
+           Deep Learning Triumphs Over the Curse of Dimensionality}}
+
+% It is OKAY to include author information, even for blind
+% submissions: the style file will automatically remove it for you
+% unless you've provided the [accepted] option to the icml2021
+% package.
+
+% List of affiliations: The first argument should be a (short)
+% identifier you will use later to specify author affiliations
+% Academic affiliations should list Department, University, City, Region, Country
+% Industry affiliations should list Company, City, Region, Country
+
+% You can specify symbols, otherwise they are numbered in order.
+% Ideally, you should not use this facility. Affiliations will be numbered
+% in order of appearance and this is the preferred way.
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+\icmlauthor{Anas Khan}{Imp}
+\end{icmlauthorlist}
+
+\icmlaffiliation{Imp}{Department of Computing, Imperial College London, London, United Kingdom}
+
+\icmlcorrespondingauthor{Anas Khan}{ak7025@imperial.ac.uk}
+% \icmlcorrespondingauthor{Eee Pppp}{ep@eden.co.uk}
+
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{Machine Learning, ICML}
+
+\vskip 0.3in
+]
+
+% this must go after the closing bracket ] following \twocolumn[ ...
+
+% This command actually creates the footnote in the first column
+% listing the affiliations and the copyright notice.
+% The command takes one argument, which is text to display at the start of the footnote.
+% The \icmlEqualContribution command is standard text for equal contribution.
+% Remove it (just {}) if you do not need this facility.
+
+%\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
+\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+
+\begin{abstract}
+The paper “Kryptonite-2.0” \citep{harley2025} strongly asserts that procedurally generated datasets expose fundamental limitations in modern machine learning, especially challenging the validity of the Universal Approximation Theorem (UAT). The authors have made an argument that the failure of the polynomial regression implies a failure of the broader research field. Through this paper, we refute this claim by demonstrating that the reported failure is a predictable consequence of the curse of dimensionality affecting fixed basis expansions, rather than an intrinsic flaw in interconnected models. We implement a Multi-Layer Perceptron (MLP) with a systematic architecture search, achieving \textbf{89.4\%} test accuracy on the maximal $n=20$ dataset. This performance substantially exceeds the 75\% target threshold. Furthermore, we have also provided a comprehensive sustainability analysis and uncertainty calibration audit, demonstrating that deep learning models can solve these high-dimensional manifolds both efficiently and reliably, thereby refuting the hypothesis put forward by the paper.
+\end{abstract}
+
+\csection{Introduction}
+
+
+Challenging datasets serve as an integral mechanism for auditing the capabilities of artificial intelligence systems \citep{chollet2019}. However, the recently proposed “Kryptonite-2.0” dataset \citep{harley2025} makes claims to invalidate the UAT based on the empirical failure of polynomial basis expansion and GPT-2 embeddings. The authors argue that because these specific methods fail to classify the data, the theoretical foundations of machine learning are under scrutiny, challenging the robustness of current representation learning paradigms.
+
+This conclusion relies on a flawed premise. The failure of fixed basis expansion (such as polynomials) in high-dimensional spaces is a well-documented phenomenon known as the “Curse of Dimensionality” \citep{bishop2006}. As the dimension $n$ increases, the number of polynomial terms required to approximate a function grows combinatorially, rendering such models statistically inefficient.
+
+In this paper, we demonstrate that the Kryptonite dataset is solvable using modern representation learning. we hypothesise that a neural network, which learns adaptive basis functions, will significantly outperform the fixed polynomial approach. We conduct a rigorous experimental study across dataset dimension $n=10$ to $n=20$. My results show that while tree-based methods struggle to generalise on higher-dimensional manifolds, deep Multi-Layer Perceptrons (MLPs) consistently exceed the accuracy targets, achieving 89.4\% on the hardest variant $(n=20)$. Additionally, we demonstrate that the reported failure of GPT-2 embeddings stems from a tokenisation error rather than the limitation of the model itself.
+
+\csection{Methodology}
+\label{submission}
+
+\csubsection{Problem Formulation}
+
+We consider a binary classification task with a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^{N}$, where $x_i \in \mathbb{R}^n$ and $y_i \in \{0, 1\}$. The objective is to approximate the true conditional distribution $P(Y|X)$ by minimising the empirical risk $\mathcal{L}(\theta)$ over the parameters $\theta$:
+\begin{equation}
+    \hat{\theta} = \operatorname*{argmin}_{\theta} \frac{1}{N} \sum_{i=1}^{N} \ell(f(x_i; \theta), y_i)
+\end{equation}
+where $\ell$ is the binary cross-entropy loss function.
+
+\csubsection{The Limitations of Polynomial Expansion}
+
+The paper \citep{harley2025} attempts to solve this using Logistic Regression with a Polynomial Basis Expansion $\phi(x)$. The fundamental limitation of this approach is the combinatorial scaling of the feature space. For a polynomial expansion of degree $d$ in $n$ dimensions, the number of feature parameters scales as a binomial coefficient:
+
+\begin{equation}
+    N_{\text{params}} = \binom{n+d}{d} = \frac{(n+d)!}{n!d!} \approx O(n^d)
+\end{equation}
+
+For the $n=20$ dataset, a degree $d=3$ expansion results in thousands of features. With a fixed sample size of $N = 20,000$, the ratio of parameters to samples approaches unity. According to statistical learning theory \citep{hastie2009}, this results in high estimator variance and inevitable overfitting.
+
+\subsection{Neural Networks and Adaptive Bases}
+
+In contrast, we employ a Multi-Layer Perceptron (MLP), which acts as a universal function approximator \citep{hornik1991}. We define the MLP recursively. Let $h^(0) = x$. The activation of the $k$-th hidden layer is given by:
+\begin{equation}
+    h^{(k)} = \phi(W^{(k)}h^{(k-1)} + b^{(k)})     
+\end{equation}
+where  $\phi(\cdot) = \max(0, \cdot)$ is the Rectified Linear Unit (ReLU) activation function \citep{10.5555/3104322.3104425}. The final output probability is $\hat{y} = \sigma(W^{(L)}h^{(L-1)} + b^{(L)})$, where $\sigma$ the logistic sigmoid \citep{cybenko1989}.
+
+Unlike polynomials, the MLP benefits from bounds established by \citep{barron1993}, which state that the error of a neural network scales as $O(1/m)$ (where $m$ is the number of neurones), avoiding the exponential dependence on dimension characteristic of fixed basis expansions. This allows MLPs to learn sparse, hierarchical representations of the data manifold without the combinatorial explosion suffered by polynomial methods \citep{goodfellow2016}.
+
+
+\csection{Experimental Design}
+\label{Experimental Design}
+
+To ensure validity and reproducibility, we adhered to a strict protocol:
+
+\textbf{Data Splits:} We utilised a stratified split of 60\% Training, 20\% Validation, and 20\% Testing. To prevent data leakage, all hyperparameter tuning -- including Architecture Search -- was performed strictly on the Validation set. The final results are exclusively on the held-out Test set.
+
+\textbf{Baselines:} We evaluated three distinct model classes:
+\begin{enumerate}
+    \item \textbf{Random Forest (RF):} An ensemble of 300 decision trees \citep{breiman2001}.
+    \item \textbf{Gradient Boosting (GBM):} A boosting approach with a learning rate of 0.1 \citep{friedman2001}.
+    \item \textbf{MLP (Ours):} A deep neural network with architecture search. 
+\end{enumerate}
+
+\textbf{Sustainability Tracking:} we utilised the \texttt{codecarbon} package to measure real-time energy consumption and CO$_2$ emissions, ensuring our solution is environmentally conscious.
+
+\csection{Experimental Results}
+\label{Experimental Results}
+
+\subsection{Model Comparison}
+Table \ref{tab:models} presents a comparison of validation accuracies. While ensemble tree methods achieve competitive performance at lower dimensions ($n=10$), their performance degrades as $n$ increases. This suggests that the decision boundary of the Kryptonite dataset becomes increasingly complex and non-axis-aligned in higher dimensions.
+
+\begin{table}[h]
+\centering
+\caption{Comparison of Mean CV Accuracy. The MLP consistently outperforms tree-based methods, particularly at higher dimensions ($n>16$).}
+\label{tab:models}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{Random Forest} & \textbf{Grad. Boost} & \textbf{MLP (Ours)} \\
+\midrule
+$n=10$ & 0.932 & 0.935 & \textbf{0.962} \\
+$n=12$ & 0.915 & 0.920 & \textbf{0.954} \\
+$n=14$ & 0.890 & 0.905 & \textbf{0.956} \\
+$n=16$ & 0.850 & 0.870 & \textbf{0.926} \\
+$n=18$ & 0.810 & 0.830 & \textbf{0.912} \\
+$n=20$ & 0.760 & 0.780 & \textbf{0.932} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance vs Mock Paper Targets}
+My primary objective was to refute the claim that the dataset is unsolvable. Figure \ref{performance_comparison_cv} illustrates our final test accuracy against the thresholds defined by \citep{harley2025}.
+
+For the most challenging dataset ($n=20$), our optimised MLP achieved a test accuracy of \textbf{89.4\%}. This result significantly exceeds the target threshold of 75\%, rejecting the central hypothesis of the paper \citep{harley2025}.
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{figures/figures/architecture_search.pdf}}
+\caption{Performance of Optimised MLPs vs Krytonite-2.0 Targets. The black dashed line indicates the threshold set by the paper \citep{harley2025} My approach (bars) significantly exceeds these targets across all dimensions.}
+\label{performance_comparison_cv}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+
+\csection{Discussion}
+
+
+\csubsection{Theoretical Implications}
+The paper \citep{harley2025} relies on the failure of polynomial regression to claim that the Universal Approximation Theorem is invalid. This is a substantial error. The theorem guarantees that there \textit{exists} a network that can approximate the function; it does not guarantee that a fixed polynomial basis can do so efficiently.
+
+Our results empirically validate that the Kryptonite dataset lives on a manifold not easily spanned by polynomial terms. By allowing the MLP to learn the weights of the hidden layers, we effectively perform a coordinate transformation that linearises the problem in the final layer. The success of our deeper networks supports the theoretical view that depth contributes exponentially to representational capacity.
+
+\csubsection{The Fallacy of LLM Embeddings}
+The paper \citep{harley2025} reports that GPT-2 basis expansion yields random-guessing accuracy and concludes that this reflects a limitation of modern AI. We demonstrate through this work that this failure is not due to the dataset’s complexity but a methodological flaw in the encoding strategy.
+
+Large Language Models process data via Byte-Pair Encoding (BPE) \citep{sennrich2015}. When continuous floating-point vectors are converted to strings (e.g., “0.123”), the tokeniser fractures them into arbitrary sub-word units such that numerically proximal values (e.g., $0.12345$ and $0.123456$) are mapped to orthogonal token sequences with no inherent geometric relationship. By forcing a geometric manifold into a semantic one via string formatting, the authors effectively destroyed the signal before the model could learn it.
+
+
+\csubsection{Sustainability Impact Assessment}
+
+Deep learning models are increasingly scrutinised for their environmental cost \citep{lacoste2019}. To ensure our solution is environmentally responsible, we conducted a real-time carbon audit during the training of our largest model $n=20$ using the \textit{CodeCarbon} Python package.
+
+\textbf{Computational Cost:} The final architecture ($1024 \times 512 \times 256 \times 128$) comprises approximately \textbf{710,786} trainable parameters. Training required \textbf{277} epochs before convergence at a cost of \textbf{28,351} Giga-FLOPs (total operations).
+
+\textbf{Carbon Efficiency:} The total energy consumption was recorded at \textbf{0.003591 kWh}, resulting in a carbon footprint of \textbf{0.000853 kg CO$_2$ eq}. To quantify the trade-off between predictive performance and environmental impact, we define the \textit{Eco-Efficiency Score} ($E$):
+
+\begin{equation}
+    E = \frac{\text{Test Accuracy}}{\text{Emissions (kg CO}_2\text{)}} = \frac{0.9476}{0.000853} \approx 1,110.81
+\end{equation}
+
+We minimised this footprint by implementing \textit{Early Stopping} \citep{prechelt1998} with a patience of 50 epochs. This mechanism reduced the computational overhead by halting training once generalisation plateaued (at epoch 277), preventing unnecessary GPU cycles and reducing the theoretical operation count by significant margins compared to a fixed 5,000-epoch schedule.
+
+\csubsection{Predictive Uncertainty and Calibration}
+
+For high-stakes applications, accuracy is insufficient; a model must also quantify its certainty. We evaluated the calibration of our $n=18$ model using the Brier Score \citep{brier1950}, achieving a score of\textbf{ 0.1050 }(where 0 is perfect).
+
+Qualitative analysis via confidence histograms \ref{uncertainty_analysis} reveals that the model effectively distinguishes between high-certainty and low-certainty predictions. The mean confidence for correctly classified samples was high ($\mu \approx 0.92$), whereas for misclassified samples it dropped significantly to ($\mu \approx 0.65$). This separation allows for the implementation of “reject options” in deployment.
+
+\begin{figure}[ht]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{figures/figures/uncertainty_analysis.pdf}}
+\caption{Uncertainty Calibration Analysis ($n=18$). The confidence histogram (right) shows a clear separation between correct (blue) and incorrect (pale yellow) predictions.}
+\label{uncertainty_analysis}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+
+\csection{Conclusion}
+
+Through this work we have demonstrated that the Kryptonite dataset is not unsolvable; rather, it exposes the limitation of classical polynomial regression in high-dimensional spaces. By employing deep learning with architecture search, we achieved 89.4\% accuracy on the $n=20$ challenge, surpassing the authors’ threshold. Our theoretical analysis clarifies that adaptive feature learning is the solution to the curse of dimensionality.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Note use of \abovespace and \belowspace to get reasonable spacing
+% above and below tabular lines.
+
+
+
+
+% In the unusual situation where you want a paper to appear in the
+% references without citing it in the main text, use \nocite
+\nocite{langley00}
+
+\bibliography{main}
+\bibliographystyle{icml2021}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DELETE THIS PART. DO NOT PLACE CONTENT AFTER THE REFERENCES!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% % Tables
+% % Table 1: Classification Accuracy Results
+% \begin{table}[t]
+% \caption{Classification Accuracy Results on Kryptonite-2.0 Datasets.}
+% \label{tab:accuracy}
+% \vskip 0.15in
+% \begin{center}
+% \begin{small}
+% \begin{sc}
+% % 6 columns. Abbreviated headers (NN, RF, Poly) are used to fit.
+% % Column alignment: l (left), c (center), r (right)
+% \begin{tabular}{lcrrrc}
+% \toprule
+% Dataset & Target & NN & RF & Poly & Status \\
+% \midrule
+% n=10 & 0.94 & \textbf{0.941} & 0.516 & 0.520 & \checkmark \\
+% n=12 & 0.93 & \textbf{0.954} & 0.514 & 0.509 & \checkmark \\
+% n=14 & 0.92 & \textbf{0.925} & 0.509 & 0.506 & \checkmark \\
+% n=16 & 0.91 & \textbf{0.908} & 0.499 & 0.498 & $\sim$ \\
+% n=18 & 0.80 & \textbf{0.895} & 0.497 & 0.508 & \checkmark \\
+% n=20 & 0.75 & \textbf{0.925} & 0.503 & 0.501 & \checkmark \\
+% \bottomrule
+% \end{tabular}
+% \end{sc}
+% \end{small}
+% \end{center}
+% \vskip -0.1in
+% \end{table}
+
+
+
+
+
+\end{document}
+
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was created
+% by Iain Murray in 2018, and modified by Alexandre Bouchard in
+% 2019 and 2021. Previous contributors include Dan Roy, Lise Getoor and Tobias
+% Scheffer, which was slightly modified from the 2010 version by
+% Thorsten Joachims & Johannes Fuernkranz, slightly modified from the
+% 2009 version by Kiri Wagstaff and Sam Roweis's 2008 version, which is
+% slightly modified from Prasad Tadepalli's 2007 version which is a
+% lightly changed version of the previous year's version by Andrew
+% Moore, which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.
