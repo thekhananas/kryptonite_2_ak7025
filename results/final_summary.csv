@@ -1,0 +1,7 @@
+n,Best Model,Test Accuracy,Target,Pass
+10,NeuralNetwork,0.9413,0.94,✓
+12,NeuralNetwork,0.9256,0.93,✗
+14,NeuralNetwork,0.9246,0.92,✓
+16,NeuralNetwork,0.8708,0.91,✗
+18,NeuralNetwork,0.7124,0.80,✗
+20,NeuralNetwork,0.7320,0.75,✗
