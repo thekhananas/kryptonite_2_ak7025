@@ -13,3 +13,7 @@ Inside of the Datasets directory, students will find several variants of the Kry
 ### Formatting
 
 The zip file "ImpCMLAuthorPack.zip" contains Latex source code for the formatting instructions pdf. Students are advised to simply place these files in Overleaf in order to stay within the specified formatting. Papers should be between 4-6 pages.
+
+### Interactive Showcase
+
+A self-contained interactive research showcase for this project lives in [`docs/`](docs/index.html) (`index.html`, `styles.css`, `script.js`, `gpt2-bpe.js`, `favicon.svg`), alongside a GitHub Pages deployment workflow at [`.github/workflows/pages.yml`](.github/workflows/pages.yml). It runs directly in any browser or via GitHub Pages once Pages is enabled in repository settings (`Source: GitHub Actions`).
